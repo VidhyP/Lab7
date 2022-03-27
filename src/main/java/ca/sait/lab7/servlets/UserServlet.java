@@ -27,9 +27,24 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        UserService us = new UserService();
+        UserService service = new UserService();
+        String action = request.getParameter("action");
+        String email = request.getParameter("email");
+        if (action != null && action.equals("delete")) {
+            try {
+                boolean deleted = service.delete(email);
+            } catch (Exception ex) {
+                Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if (action != null && action.equals("edit")) {
+            try {
+                request.setAttribute("user", service.get(email));
+            } catch (Exception ex) {
+                Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         try {
-            List<User> users = us.getAll();
+            List<User> users = service.getAll();
             request.setAttribute("users", users);
         } catch (Exception ex) {
             Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
@@ -67,22 +82,18 @@ public class UserServlet extends HttpServlet {
             }
             Role role = new Role(roleId, roleName);
 
-            String query = request.getQueryString();
-            if (query != null && query.contains("edit")) {
-                if (action != null && action.equals("add")) {
-                    us.insert(email, true, firstName, lastName, password, role);
-                } else if (action != null & action.equals("edit")) {
-                    User user = us.get(email);
-                    request.setAttribute("user", user);
-                    us.update(email, true, firstName, lastName, password, role);
-                } else if (action != null & action.equals("delete")) {
-                    us.delete(email);
-                }
+            if (action != null && action.equals("add")) {
+                us.insert(email, true, firstName, lastName, password, role);
+            } else if (action != null & action.equals("edit")) {
+                User user = us.get(email);
+                request.setAttribute("user", user);
+                us.update(email, true, firstName, lastName, password, role);
             }
+
         } catch (Exception ex) {
             Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
 
         }
-        this.getServletContext().getRequestDispatcher("/WEB-INF/users.jsp").forward(request, response);
+        doGet(request, response);
     }
 }

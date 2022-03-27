@@ -33,8 +33,8 @@
                                     <td>${user.role.name}</td>
                                     <td>${user.active ? "Yes" : "No" }</td>
                                     <td>
-                                        <a href="users?action=edit&email=${user.email}">Edit</a>
-                                        <a href="users?action=delete&email=${user.email}">Delete</a>
+                                        <a href="users?action=edit&email=${user.email.replace("+", "%2B")}">Edit</a>
+                                        <a href="users?action=delete&email=${user.email.replace("+", "%2B")}">Delete</a>
                                     </td>
                                 </tr>
                             </c:forEach>

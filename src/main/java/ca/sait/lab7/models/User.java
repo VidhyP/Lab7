@@ -11,7 +11,8 @@ import javax.persistence.*;
 @Entity
 @Table (name = "user")
 @NamedQueries({
-    @NamedQuery(name = "User.findAll", query = "SELECT u from User u")
+    @NamedQuery(name = "User.findAll", query = "SELECT u from User u"),
+    @NamedQuery(name = "User.softDelete", query = "UPDATE User SET active=0 WHERE email = :email")
 })
 public class User implements Serializable {
     @Id
